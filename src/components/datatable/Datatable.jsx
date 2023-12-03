@@ -3,13 +3,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { DeleteOutline } from "@mui/icons-material";
 import React, { useEffect, useState } from 'react';
-import rawData from '../../Data/index.js';
 import { fetchDataFromAPI } from '../../Data/api.js';
 import './Datatable.css';
 const Datatable = () => {
   
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState(rawData); // Add state for filtered data
+  const [filteredData, setFilteredData] = useState([]); // Add state for filtered data
   const [searchValue, setSearchValue] = useState(""); // State to hold search query
   const [rowSelectionModel, setRowSelectionModel] = useState([]); // State for selected rows
   const [editRowId, setEditRowId] = useState(null); // Track the row being edited
@@ -44,7 +43,6 @@ const Datatable = () => {
           typeof value === "string" && value.toLowerCase().includes(query.toLowerCase())
       )
     );
-    setData(filtered);
     setFilteredData(filtered);
   };
   // Use filteredData instead of rawData for the DataGrid rows
