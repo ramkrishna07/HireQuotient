@@ -12,7 +12,7 @@ const Datatable = () => {
   const [searchValue, setSearchValue] = useState(""); // State to hold search query
   const [rowSelectionModel, setRowSelectionModel] = useState([]); // State for selected rows
   const [editRowId, setEditRowId] = useState(null); // Track the row being edited
-
+  const pageSize = 10; // Default page size
 
   useEffect(() => {
     fetchData();
@@ -53,7 +53,7 @@ const Datatable = () => {
     const selectedOnCurrentPage = newRowSelectionModel.filter((id) => currentPageRowIds.includes(id));
     setRowSelectionModel(selectedOnCurrentPage);
   }
-  const pageSize = 10; // Default page size
+  
 
   const handleDeleteSelected = () => {
     const updatedData = data.filter((row) => !rowSelectionModel.includes(row.id));
@@ -67,6 +67,18 @@ const Datatable = () => {
       field: "id",
       headerName: "ID",
       flex: 1,
+      renderCell: (params) => {
+        if (params.row.id === editRowId) {
+          return (
+            <TextField
+              value={params.row.id}
+              onChange={(e) => handleEditFieldChange(e, "id", params.row.id)}
+              className="editableCell"
+            />
+          );
+        }
+        return params.value;
+      },
     },
     {
       field: "name",
@@ -191,7 +203,7 @@ const Datatable = () => {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton>
-                  <SearchIcon />
+                  <SearchIcon className="search-icon"/>
                 </IconButton>
               </InputAdornment>
             ),
@@ -238,7 +250,6 @@ const Datatable = () => {
         }}
       >
         <DataGrid
-          // loading={loading || !data}
           getRowId={(row) => row.id}
           rows={rows || []}
           columns={columns}
@@ -246,9 +257,6 @@ const Datatable = () => {
           checkboxSelection 
           disableRowSelectionOnClick {...rows}
           onRowSelectionModelChange={handleSelectionChange}
-          // onRowSelectionModelChange={(newRowSelectionModel) => {
-          //   setRowSelectionModel(newRowSelectionModel);
-          // }}
           rowSelectionModel={rowSelectionModel}
           initialState={{
             ...rows.initialState,
